@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foundations of Marine Biology — A Field Textbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,wght@0,400;0,600;1,400&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper: #F3ECDA;
+    --paper-shadow: #E4D9BE;
+    --ink: #2B2620;
+    --ink-soft: #5A5245;
+    --rubric: #8A2E2A;
+    --rule-gold: #A9863F;
+    --margin-note-bg: #EAE0C6;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    height: 100%;
+    margin: 0;
+  }
+
+  body{
+    background: #C9BFA8;
+    background-image:
+      radial-gradient(circle at 20% 15%, rgba(0,0,0,0.06), transparent 40%),
+      radial-gradient(circle at 80% 85%, rgba(0,0,0,0.08), transparent 45%);
+    font-family: 'Source Serif 4', serif;
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .book-wrap{
+    position: relative;
+    width: min(920px, 94vw);
+    height: min(640px, 88vh);
+    perspective: 2000px;
+  }
+
+  .page{
+    position: absolute;
+    inset: 0;
+    background: var(--paper);
+    box-shadow:
+      0 2px 0 var(--paper-shadow),
+      0 24px 48px rgba(0,0,0,0.35),
+      inset 0 0 60px rgba(90,70,40,0.05);
+    border-radius: 3px;
+    padding: 56px 64px 48px;
+    display: none;
+    flex-direction: column;
+    transform-origin: left center;
+  }
+
+  .page.active{
+    display: flex;
+  }
+
+  .page.turning-next{
+    animation: turnNext 0.5s ease forwards;
+  }
+
+  .page.turning-prev{
+    animation: turnPrev 0.5s ease forwards;
+  }
+
+  @keyframes turnNext{
+    0%{ transform: rotateY(0deg); }
+    100%{ transform: rotateY(-15deg); opacity: 0.4; }
+  }
+  @keyframes turnPrev{
+    0%{ transform: rotateY(0deg); }
+    100%{ transform: rotateY(15deg); opacity: 0.4; }
+  }
+
+  .eyebrow{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    color: var(--rubric);
+    font-size: 14px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0 0 6px;
+  }
+
+  h1.chapter-title{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 40px;
+    line-height: 1.05;
+    margin: 0 0 18px;
+    color: var(--ink);
+  }
+
+  .rule{
+    height: 2px;
+    background: linear-gradient(90deg, var(--rule-gold), transparent);
+    margin-bottom: 24px;
+    width: 100%;
+  }
+
+  .content{
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 200px;
+    gap: 36px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+  }
+
+  .content::-webkit-scrollbar{
+    width: 8px;
+  }
+  .content::-webkit-scrollbar-thumb{
+    background: var(--rule-gold);
+    border-radius: 4px;
+  }
+  .content::-webkit-scrollbar-track{
+    background: transparent;
+  }
+
+  .body-text{
+    font-size: 17px;
+    line-height: 1.7;
+    color: var(--ink);
+    column-gap: 0;
+  }
+
+  .body-text p{
+    margin: 0 0 14px;
+  }
+
+  h2.section-heading{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.15;
+    margin: 28px 0 14px;
+    color: var(--ink);
+    padding-top: 18px;
+    border-top: 1px dotted rgba(90,70,40,0.3);
+  }
+
+  .body-text > h2.section-heading:first-child{
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .margin-notes{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .drop-cap::first-letter{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 54px;
+    float: left;
+    line-height: 0.8;
+    padding: 4px 8px 0 0;
+    color: var(--rubric);
+  }
+
+  .margin-note{
+    background: var(--margin-note-bg);
+    border-left: 3px solid var(--rule-gold);
+    padding: 14px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    height: fit-content;
+  }
+
+  .margin-note-label{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--rubric);
+    display: block;
+    margin-bottom: 6px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .page-footer{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(90,70,40,0.2);
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.04em;
+  }
+
+  /* Click zones for page turning */
+  .click-zone{
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 8%;
+    z-index: 5;
+    cursor: pointer;
+  }
+  .click-zone.left{ left: 0; }
+  .click-zone.right{ right: 0; }
+
+  /* Nav hint */
+  .nav-hint{
+    position: absolute;
+    bottom: -46px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Source Serif 4', serif;
+    font-size: 13px;
+    color: #5A4E3A;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    white-space: nowrap;
+  }
+
+  kbd{
+    font-family: 'Fraunces', serif;
+    background: var(--paper);
+    border: 1px solid var(--rule-gold);
+    border-radius: 4px;
+    padding: 2px 7px;
+    font-size: 12px;
+    color: var(--ink);
+  }
+
+  .arrow-btn{
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--paper);
+    border: 1px solid var(--rule-gold);
+    color: var(--rubric);
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    cursor: pointer;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.15s ease;
+  }
+  .arrow-btn:hover{ transform: translateY(-50%) scale(1.08); }
+  .arrow-btn.prev{ left: -20px; }
+  .arrow-btn.next{ right: -20px; }
+
+  /* Cover page */
+  .cover-inner{
+    margin: auto;
+    text-align: center;
+    max-width: 480px;
+  }
+
+  .cover-eyebrow{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--rubric);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-size: 14px;
+    margin: 0 0 18px;
+  }
+
+  .cover-title{
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 52px;
+    line-height: 1.08;
+    margin: 0 0 26px;
+    color: var(--ink);
+  }
+
+  .cover-rule{
+    width: 120px;
+    height: 3px;
+    background: var(--rule-gold);
+    margin: 0 auto 22px;
+  }
+
+  .cover-author{
+    font-family: 'Source Serif 4', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-soft);
+    margin: 0 0 60px;
+  }
+
+  .cover-hint{
+    font-size: 12px;
+    color: var(--ink-soft);
+    letter-spacing: 0.03em;
+    opacity: 0.75;
+  }
+
+  /* Table of contents */
+  .toc-list{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    flex: 1;
+  }
+
+  .toc-list li{
+    margin-bottom: 4px;
+  }
+
+  .toc-link{
+    display: flex;
+    align-items: baseline;
+    width: 100%;
+    background: none;
+    border: none;
+    font-family: 'Source Serif 4', serif;
+    font-size: 16px;
+    color: var(--ink);
+    padding: 14px 4px;
+    cursor: pointer;
+    text-align: left;
+    border-bottom: 1px dotted rgba(90,70,40,0.3);
+    gap: 8px;
+  }
+
+  .toc-link:hover{
+    color: var(--rubric);
+  }
+
+  .toc-dots{
+    flex: 1;
+  }
+
+  .toc-num{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink-soft);
+  }
+
+  .toc-hint{
+    font-size: 12px;
+    color: var(--ink-soft);
+    opacity: 0.75;
+    margin-top: 18px;
+  }
+
+  @media (max-width: 700px){
+    .cover-title{ font-size: 36px; }
+    .toc-link{ font-size: 14px; }
+    .page{ padding: 36px 28px 32px; }
+    .content{ grid-template-columns: 1fr; }
+    .margin-notes{ order: -1; flex-direction: row; flex-wrap: wrap; }
+    .margin-note{ flex: 1 1 220px; }
+    h1.chapter-title{ font-size: 30px; }
+    .arrow-btn{ display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="book-wrap" id="bookWrap">
+
+  <div class="click-zone left" id="zoneLeft" aria-label="Go back"></div>
+  <div class="click-zone right" id="zoneRight" aria-label="Go forward"></div>
+
+  <button class="arrow-btn prev" id="prevBtn" aria-label="Go back">&#8249;</button>
+  <button class="arrow-btn next" id="nextBtn" aria-label="Go forward">&#8250;</button>
+
+  <!-- Cover Page -->
+  <section class="page active" data-page="cover" data-level="0">
+    <div class="cover-inner">
+      <p class="cover-eyebrow">A Field Textbook</p>
+      <h1 class="cover-title">Foundations of<br>Marine Biology</h1>
+      <div class="cover-rule"></div>
+      <p class="cover-author">By Robert Alistair Finch</p>
+      <p class="cover-hint">swipe left, press D, or click the right edge to open &rarr;</p>
+    </div>
+  </section>
+
+  <!-- Table of Contents -->
+  <section class="page" data-page="toc" data-level="1">
+    <p class="eyebrow">Contents</p>
+    <h1 class="chapter-title">Table of Contents</h1>
+    <div class="rule"></div>
+    <ul class="toc-list">
+      <li><button class="toc-link" data-target="ch1">Chapter One — The Intertidal Zone <span class="toc-dots"></span> <span class="toc-num">1</span></button></li>
+      <li><button class="toc-link" data-target="ch2">Chapter Two — Adaptations for Survival <span class="toc-dots"></span> <span class="toc-num">2</span></button></li>
+      <li><button class="toc-link" data-target="ch3">Chapter Three — A Closer Look: Tide Pools <span class="toc-dots"></span> <span class="toc-num">3</span></button></li>
+    </ul>
+    <p class="toc-hint">swipe right, press A, or click the left edge to return to the cover &larr;</p>
+  </section>
+
+  <!-- Chapter One -->
+  <section class="page" data-page="ch1" data-level="2">
+    <p class="eyebrow">Chapter One</p>
+    <h1 class="chapter-title">The Intertidal Zone</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="body-text drop-cap">
+        <p>Twice each day, the ocean withdraws from the shore and returns again, governed by the pull of the moon. In the strip of ground it leaves behind, an entire community of life has learned to survive both flood and drought within a single afternoon.</p>
+        <p>This is the intertidal zone — neither fully sea nor fully land, but a boundary that its residents have turned into a home. Barnacles seal themselves shut. Mussels cling in dense colonies. Sea stars tuck into crevices, waiting for the water's return.</p>
+        <p>Students visiting a rocky shore for the first time often expect stillness. What they find instead is one of the most densely populated habitats on Earth, compressed into a few vertical feet of stone.</p>
+        <h2 class="section-heading">Zonation Patterns</h2>
+        <p>Look closely at any rocky shoreline and a pattern emerges: distinct horizontal bands, each dominated by different organisms. This banding, called zonation, is one of the clearest examples of environmental pressure shaping where life can exist.</p>
+        <p>The high zone floods only during the largest tides, so its residents — lichens, periwinkles — tolerate long stretches of air and sun. The low zone is submerged nearly always, hosting anemones and kelp that would dry out quickly if exposed.</p>
+        <p>Between them, the middle zone is a daily negotiation, and its inhabitants are built for change above all else.</p>
+      </div>
+      <div class="margin-notes">
+        <aside class="margin-note">
+          <span class="margin-note-label">Field Note</span>
+          Visit during a minus tide for the best viewing — check local tide tables before heading out.
+        </aside>
+        <aside class="margin-note">
+          <span class="margin-note-label">Try This</span>
+          Sketch the zonation bands you observe on your next shore visit and compare them to a neighboring site.
+        </aside>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>Foundations of Marine Biology</span>
+      <span>Chapter 1</span>
+    </div>
+  </section>
+
+  <!-- Chapter Two -->
+  <section class="page" data-page="ch2" data-level="2">
+    <p class="eyebrow">Chapter Two</p>
+    <h1 class="chapter-title">Adaptations for Survival</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="body-text drop-cap">
+        <p>Every organism in this habitat carries a solution to the same two problems: how to keep water in in when the tide is out, and how to hold your ground when it rushes back in.</p>
+        <p>Mussels answer with byssal threads — tough fibers that anchor them to rock through the strongest surf. Barnacles answer by building a shell around themselves and sealing it shut like a hatch.</p>
+        <p>These adaptations did not appear overnight. Each is the product of countless generations shaped by an environment that rewards only the well-anchored.</p>
+      </div>
+      <div class="margin-notes">
+        <aside class="margin-note">
+          <span class="margin-note-label">Key Term</span>
+          <strong>Byssal threads:</strong> protein fibers secreted by mussels to attach to hard surfaces.
+        </aside>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>Foundations of Marine Biology</span>
+      <span>Chapter 2</span>
+    </div>
+  </section>
+
+  <!-- Chapter Three -->
+  <section class="page" data-page="ch3" data-level="2">
+    <p class="eyebrow">Chapter Three</p>
+    <h1 class="chapter-title">A Closer Look: Tide Pools</h1>
+    <div class="rule"></div>
+    <div class="content">
+      <div class="body-text drop-cap">
+        <p>Where rock forms a natural basin, retreating water leaves behind a tide pool — a miniature ocean stranded until the next high tide arrives. Within it, conditions can shift dramatically over just a few hours.</p>
+        <p>Sunlight warms the shallow water. Evaporation raises its salinity. Oxygen levels swing as algae photosynthesize by day and respire by night. Any creature living here must tolerate a range of conditions most marine life never experiences.</p>
+        <p>For this reason, tide pools are sometimes called a proving ground — home only to the most adaptable species on the shore.</p>
+        <h2 class="section-heading">Chapter Review</h2>
+        <p>Before continuing, take a moment to review what this chapter has covered: the structure of the intertidal zone, the causes of zonation, and the adaptations that let organisms survive here.</p>
+        <p>Consider the following question as you move forward: if sea levels continue to rise, how might the boundaries of each zone shift, and what would that mean for the species that depend on them?</p>
+        <p>The next chapter turns to the subtidal zone — the permanently submerged habitat just beyond the reach of even the lowest tides.</p>
+      </div>
+      <div class="margin-notes">
+        <aside class="margin-note">
+          <span class="margin-note-label">Safety Note</span>
+          Always step on bare rock, never on mussel beds or anemones, when exploring tide pools.
+        </aside>
+        <aside class="margin-note">
+          <span class="margin-note-label">Review Question</span>
+          Name two adaptations discussed in this chapter and the problem each one solves.
+        </aside>
+      </div>
+    </div>
+    <div class="page-footer">
+      <span>Foundations of Marine Biology</span>
+      <span>Chapter 3</span>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const pages = Array.from(document.querySelectorAll('.page'));
+  const pageById = {};
+  pages.forEach(p => pageById[p.dataset.page] = p);
+
+  // Reading order for "forward" progression through chapters
+  const chapterOrder = ['ch1','ch2','ch3'];
+
+  let currentId = 'cover';
+
+  function switchTo(targetId, direction){
+    const outgoing = pageById[currentId];
+    const incoming = pageById[targetId];
+    if(!incoming || incoming === outgoing) return;
+
+    outgoing.classList.remove('active','turning-next','turning-prev');
+    outgoing.classList.add(direction === 'next' ? 'turning-next' : 'turning-prev');
+
+    setTimeout(() => {
+      outgoing.classList.remove('turning-next','turning-prev');
+    }, 500);
+
+    currentId = targetId;
+    incoming.classList.add('active');
+  }
+
+  // Forward: cover -> toc -> (first chapter, or continue reading if already in a chapter)
+  function goForward(){
+    if(currentId === 'cover'){
+      switchTo('toc', 'next');
+    } else if(currentId === 'toc'){
+      switchTo(chapterOrder[0], 'next');
+    } else {
+      const idx = chapterOrder.indexOf(currentId);
+      if(idx > -1 && idx < chapterOrder.length - 1){
+        switchTo(chapterOrder[idx + 1], 'next');
+      }
+    }
+  }
+
+  // Back: any chapter -> toc, toc -> cover
+  function goBack(){
+    if(currentId === 'cover') return;
+    if(currentId === 'toc'){
+      switchTo('cover', 'prev');
+    } else {
+      switchTo('toc', 'prev');
+    }
+  }
+
+  function goToChapter(id){
+    switchTo(id, 'next');
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', goForward);
+  document.getElementById('prevBtn').addEventListener('click', goBack);
+  document.getElementById('zoneRight').addEventListener('click', goForward);
+  document.getElementById('zoneLeft').addEventListener('click', goBack);
+
+  document.querySelectorAll('.toc-link').forEach(btn => {
+    btn.addEventListener('click', () => goToChapter(btn.dataset.target));
+  });
+
+  // Right-click anywhere advances forward
+  document.getElementById('bookWrap').addEventListener('contextmenu', (e) => {
+    e.preventDefault();
+    goForward();
+  });
+
+  // Keyboard: arrows and A/D
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'ArrowLeft' || e.key.toLowerCase() === 'a'){
+      goBack();
+    } else if(e.key === 'ArrowRight' || e.key.toLowerCase() === 'd'){
+      goForward();
+    }
+  });
+
+  // Touch swipe support
+  const wrap = document.getElementById('bookWrap');
+  let touchStartX = 0;
+  let touchEndX = 0;
+
+  wrap.addEventListener('touchstart', (e) => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, { passive: true });
+
+  wrap.addEventListener('touchend', (e) => {
+    touchEndX = e.changedTouches[0].screenX;
+    const delta = touchEndX - touchStartX;
+    const threshold = 40;
+
+    if(Math.abs(delta) < threshold) return;
+
+    if(delta < 0){
+      // swiped right-to-left -> advance
+      goForward();
+    } else {
+      // swiped left-to-right -> go back
+      goBack();
+    }
+  }, { passive: true });
+</script>
+
+</body>
+</html>
